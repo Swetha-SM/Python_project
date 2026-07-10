@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Household Finance Management & Budget Planner</title>
+    <!-- Modern Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="/static/css/styles.css?v=5">
+    <!-- Chart.js for premium analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- AUTHENTICATION SCREEN -->
+    <div id="auth-screen" class="auth-container">
+        <!-- Login Card -->
+        <div id="login-card" class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo"><i class="fa-solid fa-wallet"></i></div>
+                <h2>Welcome Back</h2>
+                <p>Login to manage your household finance</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <div class="input-group">
+                        <input type="email" id="login-email" required placeholder="name@example.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <div class="input-group">
+                        <input type="password" id="login-password" required placeholder="••••••••">
+                    </div>
+                </div>
+                <button type="submit" class="btn"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+            </form>
+            <div class="auth-footer">
+                Don't have an account? <a href="#" id="go-to-register">Register here</a>
+            </div>
+        </div>
+
+        <!-- Register Card -->
+        <div id="register-card" class="auth-card" style="display: none;">
+            <div class="auth-header">
+                <div class="auth-logo"><i class="fa-solid fa-user-plus"></i></div>
+                <h2>Create Account</h2>
+                <p>Register to plan your smart household budget</p>
+            </div>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-username">Username</label>
+                    <div class="input-group">
+                        <input type="text" id="register-username" required placeholder="e.g. Swetha">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email Address</label>
+                    <div class="input-group">
+                        <input type="email" id="register-email" required placeholder="name@example.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <div class="input-group">
+                        <input type="password" id="register-password" required minlength="6" placeholder="At least 6 characters">
+                    </div>
+                </div>
+                <button type="submit" class="btn"><i class="fa-solid fa-user-check"></i> Register</button>
+            </form>
+            <div class="auth-footer">
+                Already have an account? <a href="#" id="go-to-login">Login here</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP SCREEN -->
+    <div id="app-screen" class="app-layout" style="display: none;">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <span class="brand-name">FinSmart</span>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item active" data-screen="dashboard">
+                        <a href="#"><i class="fa-solid fa-house"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item" data-screen="budget">
+                        <a href="#"><i class="fa-solid fa-sliders"></i> Budget Planner</a>
+                    </li>
+                    <li class="nav-item" data-screen="expenses">
+                        <a href="#"><i class="fa-solid fa-receipt"></i> Expenses Tracker</a>
+                    </li>
+                    <li class="nav-item" data-screen="bills">
+                        <a href="#"><i class="fa-solid fa-bell"></i> Bill Reminders</a>
+                    </li>
+                    <li class="nav-item" data-screen="reports">
+                        <a href="#"><i class="fa-solid fa-file-invoice-dollar"></i> Reports</a>
+                    </li>
+                    <li class="nav-item" data-screen="advisor">
+                        <a href="#"><i class="fa-solid fa-robot"></i> AI Advisor</a>
+                    </li>
+                    <li class="nav-item" data-screen="payments">
+                        <a href="#"><i class="fa-solid fa-credit-card"></i> Virtual Bank</a>
+                    </li>
+
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="avatar-letter">U</div>
+                    <div class="user-info">
+                        <p class="user-name" id="profile-name">Username</p>
+                        <p class="user-email" id="profile-email">email@domain.com</p>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Viewport -->
+        <main class="main-content">
+            
+            <!-- Global Top Header -->
+            <header class="top-header">
+                <div class="welcome-msg">
+                    <h1 id="screen-title">Dashboard</h1>
+                    <p id="screen-subtitle">Welcome back, Swetha!</p>
+                </div>
+                <div class="header-actions">
+                    <select id="global-month-select" class="month-selector">
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+            </header>
+
+            <!-- ============================================================ -->
+            <!-- DAILY REMINDER BANNER (visible 8 PM+ if not checked in) -->
+            <!-- ============================================================ -->
+            <div id="daily-reminder-banner" style="display:none;">
+                <div class="reminder-banner-content">
+                    <div class="reminder-banner-left">
+                        <div class="reminder-icon-pulse">
+                            <i class="fa-solid fa-bell"></i>
+                        </div>
+                        <div>
+                            <strong>Evening Check-in</strong>
+                            <span id="reminder-banner-time-msg">It's time to record today's expenses!</span>
+                        </div>
+                    </div>
+                    <div class="reminder-banner-actions">
+                        <button class="btn btn-sm" id="btn-reminder-log" style="background: rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#fff; padding:6px 16px;">
+                            <i class="fa-solid fa-plus"></i> Log Expenses
+                        </button>
+                        <button class="btn btn-sm" id="btn-reminder-analysis" style="background: var(--primary); color:#fff; padding:6px 16px;">
+                            <i class="fa-solid fa-chart-bar"></i> View Analysis
+                        </button>
+                        <button id="btn-reminder-dismiss" title="Dismiss until tomorrow" style="background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; font-size:18px; padding:4px 8px;">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <section id="screen-dashboard" class="app-screen active-screen">
+                <!-- Top Summary Widgets -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Monthly Salary</h3>
+                            <div class="stat-value" id="card-salary">₹0</div>
+                            <div class="stat-desc">Base disposable income</div>
+                        </div>
+                        <div class="stat-icon primary-bg"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Bank Balance</h3>
+                            <div class="stat-value" id="card-bank-balance">₹0</div>
+                            <div class="stat-desc" id="card-bank-balance-desc">Virtual account funds</div>
+                        </div>
+                        <div class="stat-icon info-bg" id="card-bank-balance-icon"><i class="fa-solid fa-building-columns"></i></div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Remaining Budget</h3>
+                            <div class="stat-value" id="card-remaining">₹0</div>
+                            <div class="stat-desc" id="card-remaining-desc">Calculated in real-time</div>
+                        </div>
+                        <div class="stat-icon success-bg" id="card-remaining-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Total Spent</h3>
+                            <div class="stat-value" id="card-spent">₹0</div>
+                            <div class="stat-desc" id="card-spent-desc">This month's expenses</div>
+                        </div>
+                        <div class="stat-icon danger-bg"><i class="fa-solid fa-basket-shopping"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Savings Progress</h3>
+                            <div class="stat-value" id="card-savings-progress">0%</div>
+                            <div class="stat-desc" id="card-savings-goal">Goal: ₹0</div>
+                        </div>
+                        <div class="stat-icon warning-bg"><i class="fa-solid fa-piggy-bank"></i></div>
+                    </div>
+                </div>
+
+                <!-- Smart Financial Guardian -->
+                <div class="dashboard-card" style="margin-top: 32px; border: 1px solid var(--primary); background: linear-gradient(180deg, rgba(99,102,241,0.03) 0%, rgba(255,255,255,0.01) 100%);">
+                    <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 16px;">
+                        <div>
+                            <h2 style="color: var(--primary);"><i class="fa-solid fa-shield-halved"></i> Smart Financial Guardian</h2>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Predictive Budget Monitoring & Intelligence</p>
+                        </div>
+                        <span id="guardian-risk-badge" class="risk-badge risk-Low">Low Risk</span>
+                    </div>
+                    
+                    <div class="guardian-grid">
+                        <div class="guardian-metric">
+                            <div class="guardian-metric-title">Safe Daily Limit</div>
+                            <div class="guardian-metric-value" id="guardian-safe-daily" style="color: var(--success);">₹0</div>
+                            <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">To stay within budget</p>
+                        </div>
+                        <div class="guardian-metric">
+                            <div class="guardian-metric-title">Actual Daily Avg</div>
+                            <div class="guardian-metric-value" id="guardian-actual-daily">₹0</div>
+                            <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Pace of spending</p>
+                        </div>
+                        <div class="guardian-metric">
+                            <div class="guardian-metric-title">Predicted Month-End</div>
+                            <div class="guardian-metric-value" id="guardian-predicted-total">₹0</div>
+                            <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Based on current pace</p>
+                        </div>
+                        <div class="guardian-metric">
+                            <div class="guardian-metric-title">Est. Exhaustion Date</div>
+                            <div class="guardian-metric-value" id="guardian-exhaustion-date" style="font-size: 16px;">Safe</div>
+                            <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">When budget hits zero</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--card-border);">
+                        <h4 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 16px;">Trajectory Comparison</h4>
+                        <div style="position: relative; height: 100px;">
+                            <canvas id="guardianChart"></canvas>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600;">
+                                <span>Budget Utilization</span>
+                                <span id="guardian-util-pct">0%</span>
+                            </div>
+                            <div class="guardian-progress-container">
+                                <div class="guardian-progress-bar" id="guardian-util-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Row -->
+                <div class="dashboard-grid" style="margin-top: 32px;">
+                    <!-- Column Left: Charts and Analytics -->
+                    <div class="grid-column">
+                        
+                        <!-- Notifications / Alerts Section -->
+                        <div class="dashboard-card alerts-card" id="dashboard-alerts-card" style="display: none;">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-triangle-exclamation" style="color: var(--warning);"></i> Active Alerts</h2>
+                            </div>
+                            <div class="alerts-list" id="dashboard-alerts-list">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Charts Panel -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-chart-pie"></i> Visual Summary</h2>
+                            </div>
+                            <div class="charts-container">
+                                <div style="position: relative; height: 320px; display: flex; justify-content: center;">
+                                    <canvas id="categoryPieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column Right: Suggestions & Reminders -->
+                    <div class="grid-column">
+                        <!-- Smart Suggestion Box -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-wand-magic-sparkles" style="color: #a855f7;"></i> AI Suggestions</h2>
+                            </div>
+                            <div class="suggestions-list" id="dashboard-suggestions-list">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Bill reminders in Dashboard -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-clock-rotate-left"></i> Upcoming Bills</h2>
+                                <button class="card-action-btn" id="dash-go-to-bills">View All</button>
+                            </div>
+                            <div class="alerts-list" id="dashboard-upcoming-bills">
+                                <!-- Shortlist of pending bills -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. BUDGET PLANNER SCREEN -->
+            <section id="screen-budget" class="app-screen">
+                <div class="dashboard-grid">
+                    <!-- Left: Sliders and Config -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-gears"></i> Budget Allocations</h2>
+                            <button class="btn btn-secondary btn-sm" id="btn-reset-default" style="width: auto;"><i class="fa-solid fa-rotate-left"></i> Recommendations</button>
+                        </div>
+                        <form id="budget-sliders-form">
+                            <div class="budget-setup-list" id="budget-sliders-container">
+                                <!-- Injected dynamically by JS -->
+                            </div>
+                            
+                            <div class="budget-summary-bar">
+                                <div class="budget-summary-metrics">
+                                    <span>Total Percentage</span>
+                                    <span id="total-allocated-percentage" class="total-pct-badge success-bg">0%</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" id="budget-allocation-progress"></div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn" style="margin-top: 24px;" id="save-budget-btn"><i class="fa-solid fa-floppy-disk"></i> Save Budget Layout</button>
+                        </form>
+                    </div>
+
+                    <!-- Right: Info Panel -->
+                    <div class="grid-column">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-user-gear"></i> Financial Parameters</h2>
+                            </div>
+                            <form id="profile-params-form">
+                                <div class="form-group">
+                                    <label for="param-salary">Monthly Net Salary (₹)</label>
+                                    <div class="input-group">
+                                        <input type="number" id="param-salary" required min="0" placeholder="e.g. 60000">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="param-savings-goal">Monthly Savings Goal (₹)</label>
+                                    <div class="input-group">
+                                        <input type="number" id="param-savings-goal" required min="0" placeholder="e.g. 12000">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="param-family">Family Configuration Details</label>
+                                    <div class="input-group">
+                                        <textarea id="param-family" rows="3" placeholder="e.g. 4 members (2 Adults, 2 Kids)"></textarea>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn"><i class="fa-solid fa-user-pen"></i> Update Parameters</button>
+                            </form>
+                        </div>
+
+                        <!-- Recommendations Table Details -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-circle-info"></i> Smart Smart Allocations</h2>
+                            </div>
+                            <div style="font-size: 13.5px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 12px;">
+                                <p>Our algorithm allocates a tailored household split:</p>
+                                <ul style="margin-left: 20px; display: flex; flex-direction: column; gap: 6px;">
+                                    <li><strong>Housing (30%):</strong> Rent/EMI maintenance</li>
+                                    <li><strong>Food (20%):</strong> Groceries, groceries & eats</li>
+                                    <li><strong>Savings & Emergency (20%):</strong> Long term and buffers</li>
+                                    <li><strong>Transportation (10%):</strong> Travel, fuel & commute</li>
+                                    <li><strong>Utilities (8%):</strong> Electricity, power, phone, net</li>
+                                    <li><strong>Healthcare & Entertainment (12%):</strong> Core living safety</li>
+                                </ul>
+                                <p>Feel free to slide percentages up or down to align with your personal expenses. Make sure the total sum equals exactly 100%.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. EXPENSES TRACKER SCREEN -->
+            <section id="screen-expenses" class="app-screen">
+                <div class="dashboard-grid">
+                    <!-- Column Left: Table Grid -->
+                    <div class="dashboard-card" style="grid-column: span 2;">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-list-check"></i> Expense History</h2>
+                            <button class="btn btn-sm" id="btn-add-expense-modal" style="width: auto;"><i class="fa-solid fa-plus"></i> Add New Expense</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="custom-table" id="expenses-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Category</th>
+                                        <th>Amount</th>
+                                        <th>Payment Mode</th>
+                                        <th>Description</th>
+                                        <th>Receipt</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expenses-table-body">
+                                    <!-- Injected dynamically by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. BILL REMINDERS SCREEN -->
+            <section id="screen-bills" class="app-screen">
+                <div class="dashboard-grid">
+                    <!-- Left: Pending Bills List -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-hourglass-half"></i> Current & Pending Reminders</h2>
+                        </div>
+                        <div class="table-container">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Bill Description</th>
+                                        <th>Amount</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bills-table-body">
+                                    <!-- Injected dynamically by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right: Add Bill -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-circle-plus"></i> Create Reminder</h2>
+                        </div>
+                        <form id="add-bill-form">
+                            <div class="form-group">
+                                <label for="bill-title">Bill Description / Service</label>
+                                <div class="input-group">
+                                    <input type="text" id="bill-title" required placeholder="e.g. Electricity Bill">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="bill-amount">Due Amount (₹)</label>
+                                <div class="input-group">
+                                    <input type="number" id="bill-amount" required min="1" placeholder="e.g. 2500">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="bill-due-date">Due Date & Time *</label>
+                                <div class="input-group">
+                                    <input type="datetime-local" id="bill-due-date" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="bill-category">Category Linkage</label>
+                                <div class="input-group">
+                                    <select id="bill-category">
+                                        <option value="Utilities">Utilities (Electricity/Water/Internet)</option>
+                                        <option value="Housing">Housing (Rent/EMI)</option>
+                                        <option value="Healthcare">Healthcare (Insurance)</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn"><i class="fa-solid fa-bell"></i> Set Bill Alert</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. REPORTS SCREEN -->
+            <section id="screen-reports" class="app-screen">
+                <div class="reports-action-bar">
+                    <div class="reports-tabs">
+                        <button class="tab-btn active" data-range="daily">Daily (30D)</button>
+                        <button class="tab-btn" data-range="weekly">Weekly (12W)</button>
+                        <button class="tab-btn" data-range="monthly">Monthly (12M)</button>
+                        <button class="tab-btn" data-range="annual">Annual (5Y)</button>
+                    </div>
+                    <div class="reports-export-btns">
+                        <button class="btn btn-secondary btn-sm" id="btn-export-pdf"><i class="fa-solid fa-file-pdf"></i> Save PDF Report</button>
+                        <button class="btn btn-secondary btn-sm" id="btn-export-csv"><i class="fa-solid fa-file-csv"></i> Download CSV</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid" style="margin-top: 32px; display: none;" id="report-predictive-insights-container">
+                    <div class="dashboard-card" style="grid-column: span 2; border: 1px solid var(--primary); background: rgba(99,102,241,0.03);">
+                        <div class="card-header">
+                            <h2 style="color: var(--primary);"><i class="fa-solid fa-shield-halved"></i> Predictive Insights (Smart Financial Guardian)</h2>
+                        </div>
+                        <div class="guardian-grid" style="margin-top: 0;">
+                            <div class="guardian-metric">
+                                <div class="guardian-metric-title">Predicted Month-End</div>
+                                <div class="guardian-metric-value" id="report-pred-total">₹0</div>
+                            </div>
+                            <div class="guardian-metric">
+                                <div class="guardian-metric-title">Expected Overspending</div>
+                                <div class="guardian-metric-value" id="report-pred-overspend" style="color: var(--danger);">₹0</div>
+                            </div>
+                            <div class="guardian-metric">
+                                <div class="guardian-metric-title">Risk Level</div>
+                                <div class="guardian-metric-value" style="margin-top: 4px;">
+                                    <span id="report-pred-risk" class="risk-badge risk-Low">Low Risk</span>
+                                </div>
+                            </div>
+                            <div class="guardian-metric" style="background: transparent; border: none; text-align: left; padding: 4px;">
+                                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;" id="report-pred-message">
+                                    Analyzing data...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid" style="margin-top: 32px;">
+                    <!-- Graphs -->
+                    <div class="dashboard-card" style="grid-column: span 2;">
+                        <div class="card-header">
+                            <h2 id="report-graph-title"><i class="fa-solid fa-chart-area"></i> Time-Series Expense Trend</h2>
+                        </div>
+                        <div style="position: relative; height: 350px;">
+                            <canvas id="reportTrendChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Table Summaries -->
+                    <div class="dashboard-card" style="grid-column: span 2;">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-table-list"></i> Category Summarization</h2>
+                        </div>
+                        <div class="table-container">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Spent Sum (INR)</th>
+                                        <th>Contribution Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reports-category-summary-body">
+                                    <!-- Injected dynamically by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. AI FINANCIAL ADVISOR SCREEN -->
+            <section id="screen-advisor" class="app-screen">
+                <div class="dashboard-grid">
+                    
+                    <!-- Left: Comparative analysis & savings suggestions -->
+                    <div class="grid-column">
+                        <div class="dashboard-card" style="border-left: 5px solid var(--primary);">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-comments" style="color:var(--primary);"></i> MoM Spending Analysis</h2>
+                            </div>
+                            <div style="display:flex; gap:20px; align-items:flex-start;">
+                                <div class="stat-icon primary-bg" style="font-size:32px; width:70px; height:70px; border-radius:50%; flex-shrink:0;">
+                                    <i class="fa-solid fa-user-tie"></i>
+                                </div>
+                                <div style="display:flex; flex-direction:column; gap:16px;">
+                                    <p style="font-size:15px; font-weight:600; color:white;">Hello, I'm your FinSmart Financial Advisor. Here is how your spending compares to last month:</p>
+                                    <ul id="advisor-comparisons-list" style="margin-left: 20px; display:flex; flex-direction:column; gap:12px; font-size:14.5px; color:var(--text-secondary);">
+                                        <!-- Injected dynamically by JS -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card" style="border-left: 5px solid var(--danger);">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-arrows-down-to-line" style="color:var(--danger);"></i> Advisor Recommendations</h2>
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:16px;">
+                                <p style="font-size:15px; font-weight:600; color:white;">To achieve your savings goal, try taking these concrete actions this month:</p>
+                                <ul id="advisor-reductions-list" style="margin-left: 20px; display:flex; flex-direction:column; gap:12px; font-size:14.5px; color:var(--text-secondary);">
+                                    <!-- Injected dynamically by JS -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Accumulation projections & simulator -->
+                    <div class="grid-column">
+                        <div class="dashboard-card" style="border-left: 5px solid var(--success);">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-calculator" style="color:var(--success);"></i> Projections & Targets</h2>
+                            </div>
+                            <ul id="advisor-projections-list" style="margin-left: 20px; display:flex; flex-direction:column; gap:12px; font-size:14.5px; color:var(--text-secondary); margin-bottom: 24px;">
+                                <!-- Injected dynamically by JS -->
+                            </ul>
+                        </div>
+
+                        <!-- Projections interactive simulator -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-sack-dollar"></i> Wealth Accumulator Simulator</h2>
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:20px;">
+                                <div class="budget-slider-item">
+                                    <div class="slider-info">
+                                        <span>Simulated Monthly Savings</span>
+                                        <span class="slider-val-info" id="simulator-amount-label">₹3,000</span>
+                                    </div>
+                                    <div class="slider-input-container">
+                                        <input type="range" class="budget-slider" id="simulator-savings-slider" min="500" max="50000" step="500" value="3000">
+                                        <input type="number" class="slider-percent-input" id="simulator-savings-input" style="width: 80px;" min="500" max="50000" step="500" value="3000">
+                                    </div>
+                                </div>
+
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:12px;">
+                                    <div class="stat-card" style="padding:16px; background:rgba(255,255,255,0.02);">
+                                        <div class="stat-info">
+                                            <h3>In 1 Year</h3>
+                                            <div class="stat-value" id="sim-1yr" style="font-size:20px; margin-top:4px;">₹36,000</div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card" style="padding:16px; background:rgba(255,255,255,0.02);">
+                                        <div class="stat-info">
+                                            <h3>In 3 Years</h3>
+                                            <div class="stat-value" id="sim-3yr" style="font-size:20px; margin-top:4px;">₹1,08,000</div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card" style="padding:16px; background:rgba(255,255,255,0.02); grid-column:span 2;">
+                                        <div class="stat-info">
+                                            <h3>In 5 Years</h3>
+                                            <div class="stat-value" id="sim-5yr" style="font-size:24px; margin-top:4px; color:var(--success);">₹1,80,000</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 7. VIRTUAL BANK & PAYMENTS SCREEN -->
+            <section id="screen-payments" class="app-screen">
+
+                <!-- TOP ROW: Account Card + Setup Form -->
+                <div class="dashboard-grid" style="margin-bottom: 24px;">
+
+                    <!-- LEFT: Bank Account Card / No Account State -->
+                    <div id="bank-no-account-panel" class="dashboard-card" style="display:none;">
+                        <div style="text-align:center; padding: 40px 20px;">
+                            <div style="width:80px;height:80px;border-radius:50%;background:rgba(99,102,241,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 20px auto;">
+                                <i class="fa-solid fa-building-columns" style="font-size:32px;color:var(--primary);"></i>
+                            </div>
+                            <h3 style="margin-bottom:8px;">No Virtual Bank Account</h3>
+                            <p style="color:var(--text-muted);font-size:14px;margin-bottom:24px;">Link your virtual bank account to start simulating payments and tracking your balance in real time.</p>
+                            <button class="btn" id="btn-show-bank-form"><i class="fa-solid fa-plus"></i> Create Bank Account</button>
+                        </div>
+                    </div>
+
+                    <!-- LEFT: Existing Bank Account Display Card -->
+                    <div id="bank-account-display" class="dashboard-card" style="display:none;">
+                        <!-- Gradient Bank Card -->
+                        <div id="virtual-bank-card" style="background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 50%, #1a1040 100%); border-radius: 16px; padding: 28px; position:relative; overflow:hidden; margin-bottom:24px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);">
+                            <div style="position:absolute;top:-30px;right:-30px;width:150px;height:150px;border-radius:50%;background:rgba(99,102,241,0.08);"></div>
+                            <div style="position:absolute;bottom:-40px;left:60px;width:120px;height:120px;border-radius:50%;background:rgba(14,165,233,0.06);"></div>
+                            <!-- Bank name & chip -->
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;">
+                                <div>
+                                    <div style="font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Virtual Bank</div>
+                                    <div id="bcard-bank-name" style="font-size:20px;font-weight:700;color:#fff;font-family:'Outfit';">State Bank of India</div>
+                                </div>
+                                <div style="width:48px;height:36px;background:linear-gradient(135deg,#fbbf24,#f59e0b);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                                    <i class="fa-solid fa-sim-card" style="color:#78350f;font-size:18px;"></i>
+                                </div>
+                            </div>
+                            <!-- Account Number -->
+                            <div style="font-size:15px;letter-spacing:0.25em;color:rgba(255,255,255,0.8);font-family:'Courier New',monospace;margin-bottom:20px;" id="bcard-account-number">XXXX XXXX XXXX 1234</div>
+                            <!-- Holder, IFSC -->
+                            <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+                                <div>
+                                    <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">Account Holder</div>
+                                    <div id="bcard-holder" style="font-size:14px;font-weight:600;color:#fff;margin-top:2px;">Swetha R</div>
+                                </div>
+                                <div style="text-align:right;">
+                                    <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">IFSC Code</div>
+                                    <div id="bcard-ifsc" style="font-size:13px;font-weight:600;color:#a5b4fc;margin-top:2px;">SBIN0001234</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stats Row -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;">
+                            <div style="background:rgba(14,165,233,0.08);border:1px solid rgba(14,165,233,0.2);border-radius:12px;padding:16px;text-align:center;">
+                                <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Balance</div>
+                                <div id="bcard-balance" style="font-size:20px;font-weight:700;color:#38bdf8;font-family:'Outfit';">₹0</div>
+                            </div>
+                            <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:16px;text-align:center;">
+                                <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Salary</div>
+                                <div id="bcard-salary" style="font-size:20px;font-weight:700;color:#a5b4fc;font-family:'Outfit';">₹0</div>
+                            </div>
+                            <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:12px;padding:16px;text-align:center;">
+                                <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Savings Goal</div>
+                                <div id="bcard-savings-goal" style="font-size:20px;font-weight:700;color:#34d399;font-family:'Outfit';">₹0</div>
+                            </div>
+                        </div>
+
+                        <!-- Savings Protection Alert -->
+                        <div id="bank-savings-alert" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+                            <div style="display:flex;align-items:flex-start;gap:10px;">
+                                <i class="fa-solid fa-triangle-exclamation" style="color:#f87171;margin-top:2px;"></i>
+                                <span id="bank-savings-alert-text" style="color:#fca5a5;font-size:13.5px;line-height:1.5;"></span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-secondary btn-sm" id="btn-edit-bank-account" style="width:100%;"><i class="fa-solid fa-pen-to-square"></i> Edit Account Details</button>
+                    </div>
+
+                    <!-- RIGHT: Bank Account Setup / Edit Form -->
+                    <div id="bank-setup-form-panel" class="dashboard-card" style="display:none;">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-building-columns"></i> <span id="bank-form-title">Create Bank Account</span></h2>
+                        </div>
+                        <form id="bank-account-form">
+                            <div class="form-group">
+                                <label for="ba-bank-name">Bank Name *</label>
+                                <div class="input-group">
+                                    <input type="text" id="ba-bank-name" required placeholder="e.g. State Bank of India, HDFC Bank">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ba-account-holder">Account Holder Name *</label>
+                                <div class="input-group">
+                                    <input type="text" id="ba-account-holder" required placeholder="e.g. Swetha Ramakrishnan">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ba-account-number">Account Number *</label>
+                                <div class="input-group">
+                                    <input type="text" id="ba-account-number" required placeholder="e.g. 123456789012" maxlength="20" pattern="[0-9]{9,20}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ba-ifsc">IFSC Code *</label>
+                                <div class="input-group">
+                                    <input type="text" id="ba-ifsc" required placeholder="e.g. SBIN0001234" maxlength="11" style="text-transform:uppercase;">
+                                </div>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                                <div class="form-group">
+                                    <label for="ba-salary">Monthly Salary (₹) *</label>
+                                    <div class="input-group">
+                                        <input type="number" id="ba-salary" required min="0" placeholder="e.g. 60000">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ba-balance">Current Balance (₹) *</label>
+                                    <div class="input-group">
+                                        <input type="number" id="ba-balance" required min="0" placeholder="e.g. 50000">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ba-savings-goal">Monthly Savings Goal (₹) *</label>
+                                <div class="input-group">
+                                    <input type="number" id="ba-savings-goal" required min="0" placeholder="e.g. 10000">
+                                </div>
+                            </div>
+                            <div style="display:flex;gap:12px;">
+                                <button type="submit" class="btn" style="flex:1;"><i class="fa-solid fa-floppy-disk"></i> <span id="bank-form-btn-text">Save Account</span></button>
+                                <button type="button" class="btn btn-secondary" id="btn-cancel-bank-form" style="width:auto; padding: 0 20px;"><i class="fa-solid fa-xmark"></i> Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+                <!-- BOTTOM ROW: Payment Form + Recent Transactions -->
+                <div id="bank-payment-row" class="dashboard-grid" style="display:none;">
+
+                    <!-- Payment Simulation Form -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-paper-plane"></i> Simulate a Payment</h2>
+                        </div>
+                        <form id="simulate-payment-form">
+                            <div class="form-group">
+                                <label for="pay-merchant">Merchant / Payee Name *</label>
+                                <div class="input-group">
+                                    <input type="text" id="pay-merchant" required placeholder="e.g. Amazon, Uber, Reliance Fresh">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pay-category">Expense Category *</label>
+                                <div class="input-group">
+                                    <select id="pay-category" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pay-method">Payment Mode *</label>
+                                <div class="input-group">
+                                    <select id="pay-method" required>
+                                        <option value="Credit Card">Credit Card</option>
+                                        <option value="Debit Card">Debit Card</option>
+                                        <option value="UPI">UPI (Google Pay / PhonePe)</option>
+                                        <option value="Net Banking">Net Banking</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pay-amount">Amount (₹) *</label>
+                                <div class="input-group">
+                                    <input type="number" step="0.01" id="pay-amount" required placeholder="e.g. 1500">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pay-date">Transaction Date *</label>
+                                <div class="input-group">
+                                    <input type="date" id="pay-date" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pay-description">Description / Notes</label>
+                                <div class="input-group">
+                                    <input type="text" id="pay-description" placeholder="e.g. Online grocery purchase">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn"><i class="fa-solid fa-wallet"></i> Authorize Payment</button>
+                        </form>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-clock-rotate-left"></i> Recent Bank Transactions</h2>
+                        </div>
+                        <div class="table-container">
+                            <table class="custom-table" style="font-size:13px;">
+                                <thead>
+                                    <tr>
+                                        <th>Merchant</th>
+                                        <th>Category</th>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-payments-tbody">
+                                    <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">No transactions yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+
+        </main>
+    </div>
+
+
+                            
+
+    
+
+    <!-- EXPENSE ADD MODAL -->
+    <div id="add-expense-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-expense-modal">&times;</button>
+            <h3 class="modal-title">Record Expense</h3>
+            <form id="add-expense-form" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="expense-amount">Amount (₹) *</label>
+                    <div class="input-group">
+                        <input type="number" step="0.01" id="expense-amount" required placeholder="e.g. 450">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="expense-category">Category *</label>
+                    <div class="input-group">
+                        <select id="expense-category" required>
+                            <!-- Populated dynamically to match budget -->
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="expense-payment-method">Payment Mode *</label>
+                    <div class="input-group">
+                        <select id="expense-payment-method" required>
+                            <option value="UPI">UPI (GPay/PhonePe)</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit Card">Debit Card</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Net Banking">Net Banking</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="expense-date">Transaction Date *</label>
+                    <div class="input-group">
+                        <input type="date" id="expense-date" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="expense-description">Memo / Description</label>
+                    <div class="input-group">
+                        <input type="text" id="expense-description" placeholder="e.g. Weekly grocery stock">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="expense-receipt">Upload Receipt (Optional)</label>
+                    <div class="input-group">
+                        <input type="file" id="expense-receipt" accept="image/*,application/pdf">
+                    </div>
+                </div>
+                <button type="submit" class="btn"><i class="fa-solid fa-circle-check"></i> Save Transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom notification bubble for user alerts -->
+    <div id="toast-notification" style="display: none; position: fixed; bottom: 24px; right: 24px; background: rgba(15, 23, 42, 0.95); border: 1px solid var(--primary); padding: 16px 24px; border-radius: 12px; backdrop-filter: blur(10px); z-index: 10000; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); animation: fadeInUp 0.3s ease;">
+        <span id="toast-message" style="font-weight: 600; color: white;">This is a test notification.</span>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- DAILY ANALYSIS MODAL                                               -->
+    <!-- ================================================================== -->
+    <div id="daily-analysis-modal" class="modal-overlay" style="display:none; z-index:9500;">
+        <div class="modal-card daily-analysis-card">
+            <!-- Header -->
+            <div class="daily-modal-header">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div class="daily-modal-icon"><i class="fa-solid fa-brain"></i></div>
+                    <div>
+                        <h2 style="margin:0; font-size:20px;">Daily Intelligence Report</h2>
+                        <p id="da-date-label" style="margin:0; color:rgba(255,255,255,0.65); font-size:13px;">Today's spending analysis</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('daily-analysis-modal').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.7);font-size:22px;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Summary Row -->
+            <div class="da-summary-row">
+                <div class="da-stat-box">
+                    <div class="da-stat-label">Today's Spend</div>
+                    <div class="da-stat-value" id="da-today-spent">₹0</div>
+                    <div class="da-stat-sub" id="da-today-txns">0 transactions</div>
+                </div>
+                <div class="da-stat-box">
+                    <div class="da-stat-label">Month Total</div>
+                    <div class="da-stat-value" id="da-month-spent">₹0</div>
+                    <div class="da-stat-sub" id="da-month-budget">of ₹0 budget</div>
+                </div>
+                <div class="da-stat-box">
+                    <div class="da-stat-label">Days Left</div>
+                    <div class="da-stat-value" id="da-days-remaining">0</div>
+                    <div class="da-stat-sub" id="da-days-elapsed">Day 0 of 31</div>
+                </div>
+                <div class="da-stat-box">
+                    <div class="da-stat-label">Safe Daily Budget</div>
+                    <div class="da-stat-value" id="da-safe-daily">₹0</div>
+                    <div class="da-stat-sub">to stay on track</div>
+                </div>
+            </div>
+
+            <!-- Budget Ring + Velocity -->
+            <div class="da-mid-row">
+                <!-- Budget progress ring -->
+                <div class="da-ring-panel">
+                    <svg class="budget-ring" viewBox="0 0 120 120">
+                        <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+                        <circle id="da-ring-circle" cx="60" cy="60" r="48" fill="none" stroke="#6366f1" stroke-width="10"
+                            stroke-dasharray="301.59 301.59" stroke-dashoffset="301.59"
+                            stroke-linecap="round" transform="rotate(-90 60 60)" style="transition: stroke-dashoffset 1s ease, stroke 0.5s;"/>
+                    </svg>
+                    <div class="ring-center-text">
+                        <div class="ring-pct" id="da-ring-pct">0%</div>
+                        <div class="ring-label">Budget Used</div>
+                    </div>
+                </div>
+
+                <!-- Projection card -->
+                <div class="da-projection-panel">
+                    <div class="da-projection-title"><i class="fa-solid fa-crystal-ball" style="color:#a855f7;"></i> End-of-Month Forecast</div>
+                    <div class="da-projection-row">
+                        <span>Daily Average</span>
+                        <strong id="da-daily-avg">₹0</strong>
+                    </div>
+                    <div class="da-projection-row">
+                        <span>Projected Total</span>
+                        <strong id="da-proj-total">₹0</strong>
+                    </div>
+                    <div class="da-projection-row">
+                        <span>Monthly Budget</span>
+                        <strong id="da-budget-total">₹0</strong>
+                    </div>
+                    <div class="da-projection-divider"></div>
+                    <div class="da-projection-outcome" id="da-projection-outcome">
+                        <!-- Filled by JS: surplus or overshoot badge -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Pace Grid -->
+            <div class="da-section-title"><i class="fa-solid fa-table-cells"></i> Category Pace Analysis</div>
+            <div class="da-category-grid" id="da-category-grid">
+                <!-- Filled by JS -->
+            </div>
+
+            <!-- Recommendations -->
+            <div class="da-section-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:#a855f7;"></i> Smart Recommendations</div>
+            <div id="da-recommendations-list">
+                <!-- Filled by JS -->
+            </div>
+
+            <!-- Footer actions -->
+            <div class="da-footer-actions">
+                <button class="btn" id="da-btn-log-expense" style="flex:1;">
+                    <i class="fa-solid fa-plus"></i> Log Expense Now
+                </button>
+                <button class="btn btn-secondary" onclick="document.getElementById('daily-analysis-modal').style.display='none'" style="flex:1;">
+                    <i class="fa-solid fa-check"></i> Done for Today
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- EDIT BILL REMINDER MODAL -->
+    <div id="edit-bill-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-edit-bill-modal">&times;</button>
+            <h3 class="modal-title">Edit Bill Reminder</h3>
+            <form id="edit-bill-form">
+                <input type="hidden" id="edit-bill-id">
+                <div class="form-group">
+                    <label for="edit-bill-title">Bill Description / Service *</label>
+                    <div class="input-group">
+                        <input type="text" id="edit-bill-title" required placeholder="e.g. Electricity Bill">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-bill-amount">Due Amount (₹) *</label>
+                    <div class="input-group">
+                        <input type="number" id="edit-bill-amount" required min="1" placeholder="e.g. 2500">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-bill-due-date">Due Date & Time *</label>
+                    <div class="input-group">
+                        <input type="datetime-local" id="edit-bill-due-date" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-bill-category">Category Linkage</label>
+                    <div class="input-group">
+                        <select id="edit-bill-category">
+                            <option value="Utilities">Utilities (Electricity/Water/Internet)</option>
+                            <option value="Housing">Housing (Rent/EMI)</option>
+                            <option value="Healthcare">Healthcare (Insurance)</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-bill-status">Status *</label>
+                    <div class="input-group">
+                        <select id="edit-bill-status" required>
+                            <option value="Pending">Pending</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-notification" style="display: none; position: fixed; bottom: 24px; right: 24px; background: rgba(15, 23, 42, 0.95); border: 1px solid var(--primary); padding: 16px 24px; border-radius: 12px; backdrop-filter: blur(10px); z-index: 10000; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); animation: fadeInUp 0.3s ease;">
+        <span id="toast-message" style="font-weight: 600; color: white;">This is a test notification.</span>
+    </div>
+
+    <!-- Frontend Core Application Logic -->
+    <script src="/static/js/app.js?v=5"></script>
+</body>
+</html>
